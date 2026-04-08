@@ -27,7 +27,6 @@
 
 ```bash
 git clone https://github.com/lauracamacholeon/motivos-test.git
-cd motivos
 npm install
 ```
 
