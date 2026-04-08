@@ -1,0 +1,135 @@
+<!-- Backdrop -->
+<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+  <!-- Modal -->
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-md mx-4">
+    <!-- Header -->
+    <div
+      class="flex items-center justify-between px-6 py-4 border-b border-gray-100"
+    >
+      <h2 class="text-base font-semibold text-gray-800">
+        {{ isEditing ? "Edit reason" : "New reason" }}
+      </h2>
+      <button
+        (click)="cancel()"
+        class="text-gray-400 hover:text-gray-600 transition-colors text-xl leading-none"
+      >
+        &times;
+      </button>
+    </div>
+
+    <!-- Error -->
+    @if (error$ | async; as error) {
+    <div
+      class="mx-6 mt-4 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg"
+    >
+      {{ error }}
+    </div>
+    }
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="submit()" class="px-6 py-4 space-y-4">
+      <!-- Reason code -->
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1"
+          >Reason code</label
+        >
+        <input
+          formControlName="motivo"
+          type="text"
+          placeholder="e.g. AJ08"
+          class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
+          [class.border-red-400]="isInvalid('motivo')"
+          [class.border-gray-300]="!isInvalid('motivo')"
+        />
+        @if (isInvalid('motivo')) {
+        <p class="text-red-500 text-xs mt-1">Reason code is required.</p>
+        }
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1"
+          >Description</label
+        >
+        <input
+          formControlName="descripcion"
+          type="text"
+          placeholder="e.g. Portfolio adjustment"
+          class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          [class.border-red-400]="isInvalid('descripcion')"
+          [class.border-gray-300]="!isInvalid('descripcion')"
+        />
+        @if (isInvalid('descripcion')) {
+        <p class="text-red-500 text-xs mt-1">Description is required.</p>
+        }
+      </div>
+
+      <!-- Type -->
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Type</label>
+        <select
+          formControlName="tipo"
+          class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          [class.border-red-400]="isInvalid('tipo')"
+          [class.border-gray-300]="!isInvalid('tipo')"
+        >
+          <option value="" disabled>Select a type...</option>
+          @for (op of tipos$ | async; track op.sValor) {
+          <option [value]="op.sValor">{{ op.sOpcion }}</option>
+          }
+        </select>
+        @if (isInvalid('tipo')) {
+        <p class="text-red-500 text-xs mt-1">Type is required.</p>
+        }
+      </div>
+
+      <!-- Reason type -->
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1"
+          >Reason type</label
+        >
+        <select
+          formControlName="tipo_motivo"
+          class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          [class.border-red-400]="isInvalid('tipo_motivo')"
+          [class.border-gray-300]="!isInvalid('tipo_motivo')"
+        >
+          <option value="" disabled>Select a reason type...</option>
+          @for (op of tiposMotivo$ | async; track op.sValor) {
+          <option [value]="op.sValor">{{ op.sOpcion }}</option>
+          }
+        </select>
+        @if (isInvalid('tipo_motivo')) {
+        <p class="text-red-500 text-xs mt-1">Reason type is required.</p>
+        }
+      </div>
+
+      <!-- Footer -->
+      <div class="flex justify-end gap-3 pt-2">
+        <button
+          type="button"
+          (click)="cancel()"
+          class="text-sm px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          [disabled]="form.invalid || (loading$ | async)"
+          class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          @if (loading$ | async) {
+          <span class="flex items-center gap-2">
+            <span
+              class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"
+            ></span>
+            Saving...
+          </span>
+          } @else {
+          {{ isEditing ? "Save changes" : "Create" }}
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

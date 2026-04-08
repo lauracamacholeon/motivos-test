@@ -1,0 +1,129 @@
+<div class="max-w-6xl mx-auto p-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-semibold text-gray-800">Reasons</h1>
+    <button
+      (click)="openCreate()"
+      class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+    >
+      + New reason
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="mb-4">
+    <input
+      type="text"
+      placeholder="Search by reason or description..."
+      [ngModel]="filter()"
+      (ngModelChange)="onFilterChange($event)"
+      class="w-full sm:w-80 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <!-- Error -->
+  @if (error$ | async; as error) {
+  <div
+    class="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg"
+  >
+    {{ error }}
+  </div>
+  }
+
+  <!-- Loading -->
+  @if (loading$ | async) {
+  <div class="flex justify-center py-12">
+    <div
+      class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"
+    ></div>
+  </div>
+  }
+
+  <!-- Table -->
+  @if (!(loading$ | async)) { @if (motivos$ | async; as motivos) { @if
+  (motivos.length === 0) {
+  <div class="text-center py-12 text-gray-400 text-sm">No reasons found.</div>
+  } @else {
+  <div class="overflow-x-auto rounded-lg border border-gray-200">
+    <table class="w-full text-sm text-left">
+      <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+        <tr>
+          <th class="px-4 py-3">Reason</th>
+          <th class="px-4 py-3">Description</th>
+          <th class="px-4 py-3">Type</th>
+          <th class="px-4 py-3">Reason type</th>
+          <th class="px-4 py-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 bg-white">
+        @for (m of motivos; track m.motivo) {
+        <tr class="hover:bg-gray-50 transition-colors">
+          <td class="px-4 py-3 font-medium text-gray-800">{{ m.motivo }}</td>
+          <td class="px-4 py-3 text-gray-600">{{ m.descripcion }}</td>
+          <td class="px-4 py-3 text-gray-600">{{ m.tipo }}</td>
+          <td class="px-4 py-3">
+            <span
+              class="px-2 py-1 rounded-full text-xs font-medium"
+              [class]="
+                m.tipo_motivo === 'Interna'
+                  ? 'bg-blue-50 text-blue-700'
+                  : 'bg-green-50 text-green-700'
+              "
+            >
+              {{ m.tipo_motivo }}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-right space-x-2">
+            <button
+              (click)="openEdit(m)"
+              class="text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors"
+            >
+              Edit
+            </button>
+            <button
+              (click)="confirmDelete(m.motivo)"
+              class="text-red-500 hover:text-red-700 text-xs font-medium transition-colors"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  } } }
+</div>
+
+<!-- Confirm delete modal -->
+@if (showConfirm()) {
+<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm mx-4">
+    <h2 class="text-base font-semibold text-gray-800 mb-2">Delete reason</h2>
+    <p class="text-sm text-gray-500 mb-6">
+      Are you sure you want to delete
+      <span class="font-medium text-gray-700">{{ showConfirm() }}</span
+      >? This action cannot be undone.
+    </p>
+    <div class="flex justify-end gap-3">
+      <button
+        (click)="cancelDelete()"
+        class="text-sm px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="deleteMotivo()"
+        class="text-sm px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Form modal -->
+<!-- @if (showForm()) {
+<app-motivo-form [motivo]="selectedMotivo()" (close)="closeForm()" />
+} -->
