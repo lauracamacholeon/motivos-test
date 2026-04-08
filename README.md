@@ -1,16 +1,18 @@
 # Motivos Manager
 
-Angular application to manage "Motivos" (Reasons) via REST API.
+> Angular 18 application to manage Reasons (Motivos) via REST API — built with NgRx, Tailwind CSS and Standalone Components.
 
 ---
 
 ## Tech Stack
 
-- Angular 18 (Standalone components)
-- NgRx 18 (Store, Effects, Entity, Devtools)
-- Tailwind CSS 3
-- Reactive Forms
-- TypeScript 5.5
+| Layer            | Technology                                 |
+| ---------------- | ------------------------------------------ |
+| Framework        | Angular 18 (Standalone)                    |
+| State Management | NgRx 18 (Store, Effects, Entity, Devtools) |
+| Styling          | Tailwind CSS 3                             |
+| Forms            | Angular Reactive Forms                     |
+| Language         | TypeScript 5.5                             |
 
 ---
 
@@ -23,48 +25,49 @@ Angular application to manage "Motivos" (Reasons) via REST API.
 
 ### Installation
 
-\```bash
-git clone (https://github.com/lauracamacholeon/motivos-test.git)
+```bash
+git clone https://github.com/lauracamacholeon/motivos-test.git
+cd motivos
 npm install
-\```
+```
 
 ### Run
 
-\```
+```bash
 ng serve
-\```
+```
 
 Open [http://localhost:4200](http://localhost:4200)
 
 ### Build
 
-\```bash
+```bash
 npm run build
-\```
+```
 
 ---
 
 ## Project Structure
 
-\```
+```
 src/app/
 ├── core/
-│ ├── models/
-│ │ └── motivo.model.ts # Interfaces and types
-│ └── services/
-│ └── motivos.service.ts # HTTP calls to the API
+│   ├── models/
+│   │   └── motivo.model.ts          # Interfaces and types
+│   └── services/
+│       └── motivos.service.ts       # HTTP calls to the API
 ├── store/
-│ └── motivos/
-│ ├── motivos.actions.ts # NgRx actions
-│ ├── motivos.reducer.ts # State transitions
-│ ├── motivos.effects.ts # Side effects (HTTP)
-│ ├── motivos.selectors.ts # Memoized selectors
-│ └── motivos.state.ts # State shape + adapter
+│   └── motivos/
+│       ├── motivos.actions.ts       # NgRx actions
+│       ├── motivos.reducer.ts       # State transitions
+│       ├── motivos.effects.ts       # Side effects (HTTP)
+│       ├── motivos.selectors.ts     # Memoized selectors
+│       └── motivos.state.ts         # State shape + adapter
 └── features/
-└── motivos/
-├── motivos-list/ # Main table view
-└── motivo-form/ # Create / edit modal
-\```
+    └── motivos/
+        ├── motivos-list/            # Main table view
+        └── motivo-form/             # Create / edit modal
+```
 
 ---
 
@@ -72,7 +75,7 @@ src/app/
 
 - List all motivos with search by reason code or description
 - Create new motivo with form validation
-- Edit existing motivo (reason code is locked on edit)
+- Edit existing motivo — reason code is locked on edit
 - Delete motivo with confirmation dialog
 - Loading indicators on all async operations
 - Error messages for failed requests
@@ -82,35 +85,23 @@ src/app/
 
 ## Technical Decisions
 
-### NgRx Entity
+**NgRx Entity**
+Manages the motivos collection with built-in `addOne`, `updateOne`, `removeOne` and `selectAll` — no manual array manipulation anywhere.
 
-Manages the motivos collection with built-in `addOne`, `updateOne`,
-`removeOne` and `selectAll` — no manual array manipulation anywhere.
+**Standalone Components**
+No NgModules. Simpler dependency graph and better tree-shaking out of the box.
 
-### Standalone Components
+**Signals for UI State**
+Filter text, modal visibility and selected motivo live in Angular signals instead of the store. This keeps a clear boundary between server state (NgRx) and ephemeral UI state (signals).
 
-No NgModules. Simpler dependency graph and better tree-shaking.
+**Lazy Loading**
+The motivos feature loads on demand via `loadComponent` in the router — no eager loading of feature code on app start.
 
-### Signals for UI State
+**forkJoin for Catalogs**
+The `tipo` and `tipo_motivo` dropdowns are fetched in parallel in a single `loadCatalogs` effect using `forkJoin`, reducing waterfall requests to one round trip.
 
-Filter text, modal visibility and selected motivo live in Angular signals
-instead of the store. This keeps a clear boundary between server state
-(NgRx) and ephemeral UI state (signals).
-
-### Lazy Loading
-
-The motivos feature loads on demand via `loadComponent` in the router.
-No eager loading of feature code on app start.
-
-### forkJoin for Catalogs
-
-The `tipo` and `tipo_motivo` dropdowns are fetched in parallel in a
-single `loadCatalogs` effect using `forkJoin`, reducing waterfall requests.
-
-### Single Environment File
-
-No `fileReplacements` needed since both dev and prod point to the same
-API base URL. Can be split when a local mock server is introduced.
+**Single Environment File**
+No `fileReplacements` needed since both dev and prod point to the same API base URL. Can be split when a local mock server is introduced.
 
 ---
 
@@ -134,8 +125,7 @@ Base URL: `https://desarrolloaws.datascoring.co:9995`
 - `data: false` on create means the reason code already exists
 - `data: false` on delete means the motivo is currently in use
 - The `motivo` field acts as the unique primary key
-- The API fields (`motivo`, `descripcion`, `tipo`, `tipo_motivo`) are
-  kept as-is since they are part of the API contract
+- API field names (`motivo`, `descripcion`, `tipo`, `tipo_motivo`) are kept as-is since they are part of the API contract and cannot be renamed
 
 ---
 
