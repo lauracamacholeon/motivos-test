@@ -24,14 +24,13 @@ Angular application to manage "Motivos" (Reasons) via REST API.
 ### Installation
 
 \```bash
-git clone <your-repo-url>
-cd motivos
+git clone (https://github.com/lauracamacholeon/motivos-test.git)
 npm install
 \```
 
 ### Run
 
-\```bash
+\```
 ng serve
 \```
 
